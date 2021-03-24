@@ -143,13 +143,16 @@
         </div>
       </div>
       <div class="articles-container">
-        <ul class="articles-list" id="articlesList"></ul>
+        <ul class="articles-list" id="articlesList">
+
+        </ul>
       </div>
     </main>
     <footer>
       <p>©Copyright Jigau Cristian 2021</p>
     </footer>
     <script>
+
       class Article {
         constructor(heading, content) {
           this._heading = heading;
@@ -183,7 +186,9 @@
       }
 
       class ArticleManager {
-        constructor() {}
+        constructor() {
+          this.articleId = 0;
+        }
         showAll() {
           document.getElementById('articlesList').innerHTML = '';
 
@@ -221,7 +226,7 @@
               );
               linkUpdate.setAttribute(
                 'onclick',
-                'articleManager.updateArticle(event)'
+                'articleManager.openModal(event)'
               );
               linkDelete.setAttribute(
                 'onclick',
@@ -249,7 +254,6 @@
         showArticle(e) {
           document.getElementById('articlesList').innerHTML = '';
           let id = e.target.parentNode.parentNode.id;
-          if (localStorage.getItem(id) !== localStorage.getItem('total')) {
             let value = JSON.parse(localStorage.getItem(id));
             let listItem = document.createElement('li');
             let spanTitle = document.createElement('span');
@@ -263,7 +267,6 @@
             listItem.appendChild(spanTitle);
             listItem.appendChild(articleParagraph);
             document.getElementById('articlesList').appendChild(listItem);
-          }
         }
         addArticle() {
           let form = new ArticleForm();
@@ -277,11 +280,15 @@
           var modal = document.getElementById('formModal');
           modal.style.display = 'none';
         }
-        updateArticle(e) {
-          this.openModal(e);
-          let id = e.target.parentNode.parentNode.id;
-          alert(id);
+        updateArticle() {
+          let id = this.articleId;
+          let form = new ArticleForm();
+          form.getInfo();
+          let article = new Article(form.heading, form.content);
+          localStorage.setItem(id, JSON.stringify(article));
           this.showAll();
+          var modal = document.getElementById('formModal');
+          modal.style.display = 'none';
         }
         deleteArticle(e) {
           let id = e.target.parentNode.parentNode.id;
@@ -306,6 +313,7 @@
             document.getElementById('articleFormTitle').value = value._heading;
             document.getElementById('articleFormContent').value = value._content;
             modal.style.display = 'block';
+            this.articleId = id;
           }
         }
 
@@ -347,6 +355,7 @@
 
       let articleManager = new ArticleManager();
       if (!localStorage.getItem('total')) localStorage.setItem('total', 0);
+
     </script>
   </body>
 </html>
